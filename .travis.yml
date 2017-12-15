@@ -1,5 +1,28 @@
+
+sudo: required
 language: java
+
 jdk:
   - openjdk6
   - oraclejdk7
   - oraclejdk8
+
+
+script:
+  - mvn clean cobertura:cobertura -Dtest=ClusterInitTest#should_be_able_to_close_cluster_that_never_successfully_connected -DfailIfNoTests=false
+
+before_deploy:
+- tar -zcvf coverage-result.tar.gz /home/travis/build/leusonmario/java-driver/target/site/cobertura
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "QNF5nGTQ3Q4qBe1LIwf3CVw90Bfhq8d7hQ6b1XZJ998nZEJQ8i/HClxtNFKc6TZlGYYADtDZ2n99+U46RB/o9xWWFPnfZHwhSWKmSawOhYRc5z5Q0ZLgR9dgnfwDs4hdL/PosYhdA8oTemFxzQpWL2HtX3Np3Qc7wY1XDG9oxXSK0BMHA2GHEg3GJaXoNodakLNDltTgrnuhAn1wOaoX+ZNTzs3sskyngkcWwopNWcdcQkUy6cxoQcCg07RVYfStO33xuzhF49a7zhV2oTNO/X9HqLYpUrh89VTcrFaIS20/9VzMv+bqx+Jfi6/7Ko/mknXJQaHqTvZ/gK5/IBIlF+NcDrZeO/nzSupTvaHVagnWYciAAeOHm6T8kpBGCPpAO9D4l2OMpgHelUC9Rq2qJ9Kc1+iVo/k0yH1TFAaaF+oZ4ij792Xoyi/f1IrGRlS30HluRW/UABIt/UOkG8FtkgerCYhuv/19JpitXsKDuVwBTyVUnqJmf7zwX/PpaDQV7saleYuTksClVhqboph6tIcucV4uX4ziN6yyirq8sTDBSs3zzu0ppKeB/nKSFOsS7mir4c8dBfcVHpg1CEVAqyC7XJOZAK+gSVlps+8KF59CNFp/kv6n5YyZPSGTzuSHmn30lTxvi8We7aXnoHMx8d4i7eAkAhCuvpWeukL23pY="
+
+
+  file: coverage-result.tar.gz
+  file_glob: true
+  overwrite: true
+  skip_cleanup: true
+  on:
+    tags: true
